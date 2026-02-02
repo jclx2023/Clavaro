@@ -13,7 +13,7 @@ public struct SpawnEntry
 }
 
 /// <summary>
-/// 球生成器，负责在指定区域生成初始球池
+/// 球生成器,负责在指定区域生成初始球池
 /// </summary>
 public class BallSpawner : MonoBehaviour
 {
@@ -30,8 +30,8 @@ public class BallSpawner : MonoBehaviour
     [SerializeField] private List<SpawnEntry> _spawnConfigs;
 
     [Header("生成区域")]
-    [SerializeField] private RectTransform _topLeft;
-    [SerializeField] private RectTransform _bottomRight;
+    [SerializeField] private Transform _topLeft;
+    [SerializeField] private Transform _bottomRight;
 
     [Header("生成参数")]
     [SerializeField] private float _spawnInterval = 0.05f;
@@ -91,6 +91,70 @@ public class BallSpawner : MonoBehaviour
     {
         ClearAllBalls();
         SpawnAllBalls();
+    }
+
+    /// <summary>
+    /// 测试用：立即生成所有球（无延迟）
+    /// </summary>
+    [ContextMenu("Test: Spawn All Balls Instantly")]
+    public void TestSpawnInstantly()
+    {
+        // 初始化 SeedManager（如果还没初始化）
+        if (SeedManager.Instance == null)
+        {
+            Debug.LogError("[BallSpawner] SeedManager.Instance 为空，请确保场景中有 SeedManager！");
+            return;
+        }
+        
+        if (string.IsNullOrEmpty(SeedManager.Instance.MasterSeed))
+        {
+            SeedManager.Instance.InitializeSeed();
+        }
+
+        // 获取随机器
+        _random = SeedManager.Instance.GetRandom("BallSpawner");
+
+        // 展开配置列表
+        List<BallConfig> ballsToSpawn = ExpandSpawnConfigs();
+
+        // 随机打乱顺序
+        ShuffleList(ballsToSpawn);
+
+        DebugLog($"Testing instant spawn: {ballsToSpawn.Count} balls");
+
+        // 清空位置记录
+        _spawnedPositions.Clear();
+        _spawnedRadii.Clear();
+
+        // 立即生成所有球
+        int successCount = 0;
+        for (int i = 0; i < ballsToSpawn.Count; i++)
+        {
+            BallConfig config = ballsToSpawn[i];
+            Vector2? position = FindValidPosition(config.radius);
+
+            if (position.HasValue)
+            {
+                SpawnBall(config, position.Value);
+                successCount++;
+            }
+            else
+            {
+                DebugLog($"Warning: Could not find valid position for ball {i} ({config.ballName})");
+            }
+        }
+
+        DebugLog($"Test spawn completed: {successCount}/{ballsToSpawn.Count} balls");
+        EventManager.Instance?.TriggerBallsSpawnCompleted(successCount);
+    }
+
+    /// <summary>
+    /// 测试用：清除所有球
+    /// </summary>
+    [ContextMenu("Test: Clear All Balls")]
+    public void TestClearBalls()
+    {
+        ClearAllBalls();
     }
 
     #endregion
@@ -233,10 +297,10 @@ public class BallSpawner : MonoBehaviour
 
         Gizmos.color = Color.cyan;
 
-        Vector2 topLeft = _topLeft.position;
-        Vector2 bottomRight = _bottomRight.position;
-        Vector2 topRight = new Vector2(bottomRight.x, topLeft.y);
-        Vector2 bottomLeft = new Vector2(topLeft.x, bottomRight.y);
+        Vector3 topLeft = _topLeft.position;
+        Vector3 bottomRight = _bottomRight.position;
+        Vector3 topRight = new Vector3(bottomRight.x, topLeft.y, 0f);
+        Vector3 bottomLeft = new Vector3(topLeft.x, bottomRight.y, 0f);
 
         Gizmos.DrawLine(topLeft, topRight);
         Gizmos.DrawLine(topRight, bottomRight);

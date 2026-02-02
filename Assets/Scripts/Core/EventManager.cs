@@ -30,6 +30,7 @@ public class EventManager : MonoBehaviour
     public event Action<int> OnBallsSpawnCompleted; // 球生成完毕，参数为数量
 
     // 计分事件
+    public event Action<List<BallBase>> OnAllBallsEnteredSettlementPool;
     public event Action<int, int> OnScoreCalculated; // (本次得分, 总分)
     public event Action<int> OnGrabCountChanged;     // 剩余抓取次数
 
@@ -116,5 +117,10 @@ public class EventManager : MonoBehaviour
         OnRoundResult?.Invoke(success);
     }
 
+    public void TriggerAllBallsEnteredSettlementPool(List<BallBase> balls)
+    {
+        DebugLog($"AllBallsEnteredSettlementPool: {balls.Count} balls");
+        OnAllBallsEnteredSettlementPool?.Invoke(balls);
+    }
     #endregion
 }

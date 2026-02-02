@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a95591c0979e99c45a370ac7766662bb, type: 3}
-  m_Name: TestingPlus1
+  m_Name: Mul1.5
   m_EditorClassIdentifier: 
-  ballName: +10
-  ballType: 0
-  value: 10
-  sprite: {fileID: -2413806693520163455, guid: e074a9b4b276847b0b578d2c96d2c1db, type: 3}
+  ballName: x1.5
+  ballType: 1
+  value: 1.5
+  sprite: {fileID: 0}
   textColor: {r: 1, g: 1, b: 1, a: 1}
+  radius: 0.5
   mass: 1
   linearDrag: 0.5
   angularDrag: 0.5

@@ -30,8 +30,8 @@ public class BallSpawner : MonoBehaviour
     [SerializeField] private List<SpawnEntry> _spawnConfigs;
 
     [Header("生成区域")]
-    [SerializeField] private Transform _topLeft;
-    [SerializeField] private Transform _bottomRight;
+    [SerializeField] private RectTransform _topLeft;
+    [SerializeField] private RectTransform _bottomRight;
 
     [Header("生成参数")]
     [SerializeField] private float _spawnInterval = 0.05f;
@@ -233,10 +233,10 @@ public class BallSpawner : MonoBehaviour
 
         Gizmos.color = Color.cyan;
 
-        Vector3 topLeft = _topLeft.position;
-        Vector3 bottomRight = _bottomRight.position;
-        Vector3 topRight = new Vector3(bottomRight.x, topLeft.y, 0);
-        Vector3 bottomLeft = new Vector3(topLeft.x, bottomRight.y, 0);
+        Vector2 topLeft = _topLeft.position;
+        Vector2 bottomRight = _bottomRight.position;
+        Vector2 topRight = new Vector2(bottomRight.x, topLeft.y);
+        Vector2 bottomLeft = new Vector2(topLeft.x, bottomRight.y);
 
         Gizmos.DrawLine(topLeft, topRight);
         Gizmos.DrawLine(topRight, bottomRight);

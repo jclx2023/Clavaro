@@ -33,8 +33,8 @@ public class BallConfig : ScriptableObject
     public Color textColor = Color.white;
 
     [Header("尺寸")]
-    [Tooltip("球的半径（用于生成时碰撞检测）")]
-    public float radius = 0.5f;
+    [Tooltip("球的半径（像素单位，默认32）")]
+    public float radius = 32f;
 
     [Header("物理属性")]
     [Tooltip("质量")]
@@ -47,7 +47,7 @@ public class BallConfig : ScriptableObject
     public float angularDrag = 0.5f;
     
     [Tooltip("重力缩放")]
-    public float gravityScale = 1f;
+    public float gravityScale = 10f;
     
     [Tooltip("物理材质（摩擦力/弹性）")]
     public PhysicsMaterial2D physicsMaterial;
@@ -73,5 +73,13 @@ public class BallConfig : ScriptableObject
         return ballType == BallType.Score 
             ? $"+{value:0}" 
             : $"×{value:0.##}";
+    }
+
+    /// <summary>
+    /// 获取相对于默认尺寸(100)的缩放比例
+    /// </summary>
+    public float GetScale()
+    {
+        return radius / 32f;
     }
 }

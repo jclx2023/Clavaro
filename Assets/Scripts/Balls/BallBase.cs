@@ -69,19 +69,21 @@ public class BallBase : MonoBehaviour
     {
         _config = config;
         
-        ApplyVisuals();
-        ApplyPhysics();
-        ApplyShaderEffects();
-        
-        //DebugLog($"Initialized: {config.ballName}");
+        ApplyScale();         // 应用缩放
+        ApplyVisuals();       // 应用视觉
+        ApplyPhysics();       // 应用物理
+        ApplyShaderEffects(); // 应用Shader效果
+    }
+    
+    private void ApplyScale()
+    {
+        float scale = _config.GetScale();
+        transform.localScale = Vector3.one * scale;
     }
 
     private void ApplyVisuals()
     {
-        if (_spriteRenderer != null && _config.sprite != null)
-        {
-            _spriteRenderer.sprite = _config.sprite;
-        }
+        _spriteRenderer.sprite = _config.sprite;
 
         if (_valueText != null)
         {
@@ -104,7 +106,7 @@ public class BallBase : MonoBehaviour
     }
 
     /// <summary>
-    /// 应用Sprite Shader 效果
+    /// 应用Shader效果
     /// </summary>
     private void ApplyShaderEffects()
     {

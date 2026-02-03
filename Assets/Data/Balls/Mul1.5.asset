@@ -21,5 +21,8 @@ MonoBehaviour:
   mass: 1
   linearDrag: 0.5
   angularDrag: 0.5
-  gravityScale: 1
+  gravityScale: 10
   physicsMaterial: {fileID: 6200000, guid: a409b6400f9e71c46af256a1a7ef36af, type: 2}
+  hueShift: 150
+  saturation: 1
+  brightness: 1

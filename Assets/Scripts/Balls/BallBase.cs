@@ -22,6 +22,7 @@ public class BallBase : MonoBehaviour
     
     private Rigidbody2D _rb;
     private CircleCollider2D _collider;
+    private Material _materialInstance; // 材质实例
 
     #endregion
 
@@ -48,6 +49,15 @@ public class BallBase : MonoBehaviour
         _collider = GetComponent<CircleCollider2D>();
     }
 
+    protected virtual void OnDestroy()
+    {
+        // 清理材质实例
+        if (_materialInstance != null)
+        {
+            Destroy(_materialInstance);
+        }
+    }
+
     #endregion
 
     #region 初始化
@@ -61,8 +71,9 @@ public class BallBase : MonoBehaviour
         
         ApplyVisuals();
         ApplyPhysics();
+        ApplyShaderEffects();
         
-        DebugLog($"Initialized: {config.ballName}");
+        //DebugLog($"Initialized: {config.ballName}");
     }
 
     private void ApplyVisuals()
@@ -89,6 +100,33 @@ public class BallBase : MonoBehaviour
         if (_config.physicsMaterial != null)
         {
             _collider.sharedMaterial = _config.physicsMaterial;
+        }
+    }
+
+    /// <summary>
+    /// 应用Sprite Shader 效果
+    /// </summary>
+    private void ApplyShaderEffects()
+    {
+        if (_spriteRenderer == null) return;
+
+        // 创建材质实例（避免修改共享材质）
+        _materialInstance = new Material(_spriteRenderer.material);
+        _spriteRenderer.material = _materialInstance;
+
+        // 启用 HSV 关键字
+        if (_config.hueShift != 0f || _config.saturation != 1f || _config.brightness != 1f)
+        {
+            _materialInstance.EnableKeyword("HSV_ON");
+            
+            // 设置 HSV 参数
+            _materialInstance.SetFloat("_HsvShift", _config.hueShift);
+            _materialInstance.SetFloat("_HsvSaturation", _config.saturation);
+            _materialInstance.SetFloat("_HsvBright", _config.brightness);
+        }
+        else
+        {
+            _materialInstance.DisableKeyword("HSV_ON");
         }
     }
 

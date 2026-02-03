@@ -36,6 +36,12 @@ public class BallSpawner : MonoBehaviour
     [Header("生成参数")]
     [SerializeField] private float _spawnInterval = 0.05f;
     [SerializeField] private int _maxRetries = 100;
+    
+    [Header("旋转设置")]
+    [Tooltip("生成时的最小旋转角度（Z轴）")]
+    [SerializeField] private float _minRotation = 0f;
+    [Tooltip("生成时的最大旋转角度（Z轴）")]
+    [SerializeField] private float _maxRotation = 360f;
 
     #endregion
 
@@ -94,9 +100,9 @@ public class BallSpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// 测试用：立即生成所有球（无延迟）
+    /// 测试用：调用协程生成所有球
     /// </summary>
-    [ContextMenu("Test: Spawn All Balls Instantly")]
+    [ContextMenu("Test: Spawn All Balls")]
     public void TestSpawnInstantly()
     {
         // 初始化 SeedManager（如果还没初始化）
@@ -111,41 +117,8 @@ public class BallSpawner : MonoBehaviour
             SeedManager.Instance.InitializeSeed();
         }
 
-        // 获取随机器
-        _random = SeedManager.Instance.GetRandom("BallSpawner");
-
-        // 展开配置列表
-        List<BallConfig> ballsToSpawn = ExpandSpawnConfigs();
-
-        // 随机打乱顺序
-        ShuffleList(ballsToSpawn);
-
-        DebugLog($"Testing instant spawn: {ballsToSpawn.Count} balls");
-
-        // 清空位置记录
-        _spawnedPositions.Clear();
-        _spawnedRadii.Clear();
-
-        // 立即生成所有球
-        int successCount = 0;
-        for (int i = 0; i < ballsToSpawn.Count; i++)
-        {
-            BallConfig config = ballsToSpawn[i];
-            Vector2? position = FindValidPosition(config.radius);
-
-            if (position.HasValue)
-            {
-                SpawnBall(config, position.Value);
-                successCount++;
-            }
-            else
-            {
-                DebugLog($"Warning: Could not find valid position for ball {i} ({config.ballName})");
-            }
-        }
-
-        DebugLog($"Test spawn completed: {successCount}/{ballsToSpawn.Count} balls");
-        EventManager.Instance?.TriggerBallsSpawnCompleted(successCount);
+        // 调用协程
+        SpawnAllBalls();
     }
 
     /// <summary>
@@ -178,7 +151,7 @@ public class BallSpawner : MonoBehaviour
         _spawnedPositions.Clear();
         _spawnedRadii.Clear();
 
-        // 逐个生成
+        // 逐个生成（物理暂时禁用）
         int successCount = 0;
         for (int i = 0; i < ballsToSpawn.Count; i++)
         {
@@ -187,7 +160,7 @@ public class BallSpawner : MonoBehaviour
 
             if (position.HasValue)
             {
-                SpawnBall(config, position.Value);
+                SpawnBall(config, position.Value, isStatic: true);
                 successCount++;
             }
             else
@@ -195,6 +168,7 @@ public class BallSpawner : MonoBehaviour
                 DebugLog($"Warning: Could not find valid position for ball {i} ({config.ballName})");
             }
 
+            // 等待生成间隔
             if (_spawnInterval > 0)
             {
                 yield return new WaitForSeconds(_spawnInterval);
@@ -202,6 +176,14 @@ public class BallSpawner : MonoBehaviour
         }
 
         DebugLog($"Spawn completed: {successCount}/{ballsToSpawn.Count} balls");
+
+        // 等待一帧确保所有球完全生成
+        yield return null;
+
+        // 统一启用所有球的物理模拟
+        EnableAllBallsPhysics();
+
+        // 触发生成完毕事件
         EventManager.Instance?.TriggerBallsSpawnCompleted(successCount);
     }
 
@@ -266,15 +248,27 @@ public class BallSpawner : MonoBehaviour
         return false;
     }
 
-    private void SpawnBall(BallConfig config, Vector2 position)
+    private void SpawnBall(BallConfig config, Vector2 position, bool isStatic)
     {
-        GameObject ballObj = Instantiate(_ballPrefab, position, Quaternion.identity, transform);
+        // 生成随机旋转角度
+        float rotationZ = _minRotation + (float)_random.NextDouble() * (_maxRotation - _minRotation);
+        Quaternion rotation = Quaternion.Euler(0f, 0f, rotationZ);
+
+        // 实例化球
+        GameObject ballObj = Instantiate(_ballPrefab, position, rotation, transform);
         ballObj.name = $"Ball_{config.ballName}_{_spawnedBalls.Count}";
 
         BallBase ball = ballObj.GetComponent<BallBase>();
         if (ball != null)
         {
             ball.Initialize(config);
+            
+            // 如果是静止生成，禁用物理模拟
+            if (isStatic && ball.Rb != null)
+            {
+                ball.Rb.simulated = false;
+            }
+
             _spawnedBalls.Add(ball);
             _spawnedPositions.Add(position);
             _spawnedRadii.Add(config.radius);
@@ -284,6 +278,23 @@ public class BallSpawner : MonoBehaviour
             DebugLog($"Error: BallBase component not found on prefab");
             Destroy(ballObj);
         }
+    }
+
+    /// <summary>
+    /// 启用所有球的物理模拟
+    /// </summary>
+    private void EnableAllBallsPhysics()
+    {
+        int enabledCount = 0;
+        foreach (var ball in _spawnedBalls)
+        {
+            if (ball != null && ball.Rb != null)
+            {
+                ball.Rb.simulated = true;
+                enabledCount++;
+            }
+        }
+        DebugLog($"Enabled physics for {enabledCount} balls");
     }
 
     #endregion

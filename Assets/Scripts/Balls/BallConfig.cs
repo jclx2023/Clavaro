@@ -52,6 +52,19 @@ public class BallConfig : ScriptableObject
     [Tooltip("物理材质（摩擦力/弹性）")]
     public PhysicsMaterial2D physicsMaterial;
 
+    [Header("视觉效果 - All In 1 Sprite Shader")]
+    [Tooltip("色相偏移 (0-360度)")]
+    [Range(0f, 360f)]
+    public float hueShift = 0f;
+    
+    [Tooltip("饱和度 (0-2)")]
+    [Range(0f, 2f)]
+    public float saturation = 1f;
+    
+    [Tooltip("亮度 (0-2)")]
+    [Range(0f, 2f)]
+    public float brightness = 1f;
+
     /// <summary>
     /// 获取显示文本（如"+10"或"×1.5"）
     /// </summary>

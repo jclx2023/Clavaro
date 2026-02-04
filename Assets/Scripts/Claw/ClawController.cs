@@ -50,11 +50,22 @@ public class ClawController : MonoBehaviour
     [SerializeField] private float _swingAngle = 15f;
     [SerializeField] private float _swingSpeed = 8f;
 
-    [Header("爪瓣")]
+    [Header("爪瓣 - 旋转轴")]
+    [SerializeField] private Transform _leftClawPivot;
+    [SerializeField] private Transform _rightClawPivot;
+
+    [Header("爪瓣 - 视觉")]
     [SerializeField] private Transform _leftClaw;
     [SerializeField] private Transform _rightClaw;
-    [SerializeField] private float _openAngle = 30f;
+    
+    [Header("爪瓣 - 角度")]
+    [Tooltip("待机时的角度（稍微张开）")]
+    [SerializeField] private float _idleAngle = 15f;
+    [Tooltip("完全张开的角度（下降/释放时）")]
+    [SerializeField] private float _openAngle = 45f;
+    [Tooltip("闭合角度（抓取时）")]
     [SerializeField] private float _closeAngle = 5f;
+    [Tooltip("爪瓣旋转速度")]
     [SerializeField] private float _clawRotateSpeed = 5f;
 
     [Header("Grabbing阶段")]
@@ -105,9 +116,9 @@ public class ClawController : MonoBehaviour
     {
         _initialPosition = transform.position;
         
-        // 初始状态：爪瓣闭合
-        _currentClawAngle = _closeAngle;
-        _targetClawAngle = _closeAngle;
+        // 初始状态：爪瓣稍微张开（待机状态）
+        _currentClawAngle = _idleAngle;
+        _targetClawAngle = _idleAngle;
         ApplyClawAngle();
     }
 
@@ -156,6 +167,11 @@ public class ClawController : MonoBehaviour
         OnStateExit(_currentState);
         DebugLog($"State: {_currentState} → {newState}");
         _currentState = newState;
+        
+        #if UNITY_EDITOR
+        _debugState = newState; // 同步到调试字段
+        #endif
+        
         OnStateEnter(newState);
     }
 
@@ -163,6 +179,9 @@ public class ClawController : MonoBehaviour
     {
         switch (state)
         {
+            case ClawState.Idle:
+                IdleClaw();
+                break;
             case ClawState.Descending:
                 OpenClaw();
                 EventManager.Instance?.TriggerGrabStarted();
@@ -174,6 +193,9 @@ public class ClawController : MonoBehaviour
             case ClawState.Releasing:
                 OpenClaw();
                 EventManager.Instance?.TriggerGrabReleased();
+                break;
+            case ClawState.Returning:
+                IdleClaw();
                 break;
         }
     }
@@ -362,16 +384,22 @@ public class ClawController : MonoBehaviour
 
     #region 爪瓣开合
 
+    private void IdleClaw()
+    {
+        _targetClawAngle = _idleAngle;
+        DebugLog($"Claw idle: → {_idleAngle}°");
+    }
+
     private void OpenClaw()
     {
         _targetClawAngle = _openAngle;
-        DebugLog("Claw opening");
+        DebugLog($"Claw opening: → {_openAngle}°");
     }
 
     private void CloseClaw()
     {
         _targetClawAngle = _closeAngle;
-        DebugLog("Claw closing");
+        DebugLog($"Claw closing: → {_closeAngle}°");
     }
 
     private void UpdateClawAngle()
@@ -383,15 +411,37 @@ public class ClawController : MonoBehaviour
 
     private void ApplyClawAngle()
     {
-        if (_leftClaw != null)
+        // 旋转左右爪的pivot
+        if (_leftClawPivot != null)
         {
-            _leftClaw.localRotation = Quaternion.Euler(0f, 0f, _currentClawAngle);
+            _leftClawPivot.localRotation = Quaternion.Euler(0f, 0f, -_currentClawAngle);  // 改为负
         }
-        if (_rightClaw != null)
+        if (_rightClawPivot != null)
         {
-            _rightClaw.localRotation = Quaternion.Euler(0f, 0f, -_currentClawAngle);
+            _rightClawPivot.localRotation = Quaternion.Euler(0f, 0f, _currentClawAngle);   // 改为正
         }
     }
+
+    #endregion
+
+    #region 调试工具
+
+#if UNITY_EDITOR
+    [Header("━━━━━━ 调试工具 ━━━━━━")]
+    [SerializeField] private ClawState _debugState = ClawState.Disabled;
+    private void OnValidate()
+    {
+        if (Application.isPlaying)
+        {
+            // 在运行时，如果手动修改了调试状态，则切换状态
+            if (_debugState != _currentState)
+            {
+                SetState(_debugState);
+            }
+        }
+    }
+    
+#endif
 
     #endregion
 

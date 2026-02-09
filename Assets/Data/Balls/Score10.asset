@@ -17,7 +17,7 @@ MonoBehaviour:
   value: 10
   sprite: {fileID: 21300000, guid: fa2ffd3fbd5aaac428d7357f86e5deb7, type: 3}
   textColor: {r: 0.16981131, g: 0.16981131, b: 0.16981131, a: 1}
-  radius: 24
+  radius: 28
   mass: 1
   linearDrag: 0.5
   angularDrag: 0.5

@@ -68,6 +68,15 @@ public class ClawController : MonoBehaviour
     [Tooltip("爪瓣旋转速度")]
     [SerializeField] private float _clawRotateSpeed = 5f;
 
+    [Header("碰撞检测")]
+    [Tooltip("球检测器（挂载ClawDetector脚本的GameObject）")]
+    [SerializeField] private ClawDetector _ballDetector;
+    [Tooltip("触发停止下降的最小接触球数")]
+    [Range(1, 10)]
+    [SerializeField] private int _minBallsToStopDescending = 3;
+    [Tooltip("是否启用碰撞触发停止下降")]
+    [SerializeField] private bool _enableCollisionStop = true;
+
     [Header("Grabbing阶段")]
     [SerializeField] private float _grabDuration = 0.3f;
 
@@ -97,6 +106,11 @@ public class ClawController : MonoBehaviour
 
     public ClawState CurrentState => _currentState;
 
+    /// <summary>
+    /// 当前检测到的球数
+    /// </summary>
+    public int DetectedBallCount => _ballDetector != null ? _ballDetector.BallCount : 0;
+
     #endregion
 
     #region 生命周期
@@ -120,6 +134,12 @@ public class ClawController : MonoBehaviour
         _currentClawAngle = _idleAngle;
         _targetClawAngle = _idleAngle;
         ApplyClawAngle();
+
+        // 检查检测器配置
+        if (_enableCollisionStop && _ballDetector == null)
+        {
+            Debug.LogWarning($"[{SCRIPT}] Collision stop is enabled but ball detector is not assigned!");
+        }
     }
 
     private void Update()
@@ -151,6 +171,10 @@ public class ClawController : MonoBehaviour
 
         UpdateSwing();
         UpdateClawAngle();
+        
+        #if UNITY_EDITOR
+        UpdateDebugInfo();
+        #endif
     }
 
     #endregion
@@ -181,9 +205,11 @@ public class ClawController : MonoBehaviour
         {
             case ClawState.Idle:
                 IdleClaw();
+                ClearDetector();
                 break;
             case ClawState.Descending:
                 OpenClaw();
+                ClearDetector();
                 EventManager.Instance?.TriggerGrabStarted();
                 break;
             case ClawState.Grabbing:
@@ -196,6 +222,7 @@ public class ClawController : MonoBehaviour
                 break;
             case ClawState.Returning:
                 IdleClaw();
+                ClearDetector();
                 break;
         }
     }
@@ -224,15 +251,24 @@ public class ClawController : MonoBehaviour
 
     private void UpdateDescending()
     {
+        // 【新增】检查碰撞触发停止
+        if (_enableCollisionStop && CheckCollisionStop())
+        {
+            DebugLog($"Collision stop triggered! Detected {DetectedBallCount} balls");
+            SetState(ClawState.Grabbing);
+            return;
+        }
+
         // 匀速下降
         Vector3 pos = transform.position;
         pos.y -= _descendSpeed * Time.deltaTime;
 
-        // 到达底部
+        // 到达底部（保底停止）
         if (pos.y <= _bottomPosition.position.y)
         {
             pos.y = _bottomPosition.position.y;
             transform.position = pos;
+            DebugLog($"Reached bottom position, detected {DetectedBallCount} balls");
             SetState(ClawState.Grabbing);
             return;
         }
@@ -314,6 +350,32 @@ public class ClawController : MonoBehaviour
         }
 
         transform.position = pos;
+    }
+
+    #endregion
+
+    #region 碰撞检测逻辑
+
+    /// <summary>
+    /// 检查是否触发碰撞停止条件
+    /// </summary>
+    private bool CheckCollisionStop()
+    {
+        if (_ballDetector == null)
+            return false;
+
+        int ballCount = _ballDetector.BallCount;
+        
+        // 达到阈值
+        return ballCount >= _minBallsToStopDescending;
+    }
+
+    /// <summary>
+    /// 清空检测器数据
+    /// </summary>
+    private void ClearDetector()
+    {
+        _ballDetector?.Clear();
     }
 
     #endregion
@@ -414,11 +476,11 @@ public class ClawController : MonoBehaviour
         // 旋转左右爪的pivot
         if (_leftClawPivot != null)
         {
-            _leftClawPivot.localRotation = Quaternion.Euler(0f, 0f, -_currentClawAngle);  // 改为负
+            _leftClawPivot.localRotation = Quaternion.Euler(0f, 0f, -_currentClawAngle);
         }
         if (_rightClawPivot != null)
         {
-            _rightClawPivot.localRotation = Quaternion.Euler(0f, 0f, _currentClawAngle);   // 改为正
+            _rightClawPivot.localRotation = Quaternion.Euler(0f, 0f, _currentClawAngle);
         }
     }
 
@@ -429,6 +491,10 @@ public class ClawController : MonoBehaviour
 #if UNITY_EDITOR
     [Header("━━━━━━ 调试工具 ━━━━━━")]
     [SerializeField] private ClawState _debugState = ClawState.Disabled;
+    
+    [Header("调试信息（只读）")]
+    [SerializeField] private int _debugDetectedBallCount;
+    
     private void OnValidate()
     {
         if (Application.isPlaying)
@@ -441,6 +507,10 @@ public class ClawController : MonoBehaviour
         }
     }
     
+    private void UpdateDebugInfo()
+    {
+        _debugDetectedBallCount = DetectedBallCount;
+    }
 #endif
 
     #endregion

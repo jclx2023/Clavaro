@@ -165,6 +165,15 @@ MonoBehaviour:
   _enableDebugLog: 1
   _spriteRenderer: {fileID: 2758277679953645522}
   _valueText: {fileID: 3058383844277852668}
+  _enableAntiOverlap: 1
+  _detectionRadiusMultiplier: 1.5
+  _separationForce: 200
+  _minSafetyMargin: 0.04
+  _checkInterval: 0.05
+  _grabbedForceMultiplier: 0.3
+  _ballLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &8096340062633104776
 GameObject:
   m_ObjectHideFlags: 0

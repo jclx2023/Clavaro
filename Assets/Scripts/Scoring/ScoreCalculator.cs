@@ -106,8 +106,8 @@ public class ScoreCalculator : MonoBehaviour
         float result = totalBaseScore * totalMultiplier;
         int finalScore = Mathf.RoundToInt(result);
 
-        DebugLog($"Score Balls: {scoreBallCount} (Total: {totalBaseScore})");
-        DebugLog($"Multiplier Balls: {multiplierBallCount} (Total: ×{totalMultiplier})");
+        //DebugLog($"Score Balls: {scoreBallCount} (Total: {totalBaseScore})");
+        //DebugLog($"Multiplier Balls: {multiplierBallCount} (Total: ×{totalMultiplier})");
         DebugLog($"Formula: {totalBaseScore} × {totalMultiplier} = {finalScore}");
 
         return finalScore;

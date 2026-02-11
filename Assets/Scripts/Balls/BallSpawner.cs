@@ -24,10 +24,9 @@ public class BallSpawner : MonoBehaviour
     private void DebugLog(string msg) { if (_enableDebugLog) Debug.Log($"[{SYSTEM}][{SCRIPT}] {msg}"); }
 
     #region 配置
-
+    
     [Header("生成配置")]
     [SerializeField] private GameObject _ballPrefab;
-    [SerializeField] private List<SpawnEntry> _spawnConfigs;
 
     [Header("生成区域")]
     [SerializeField] private Transform _topLeft;
@@ -53,6 +52,7 @@ public class BallSpawner : MonoBehaviour
     // 生成时的位置和半径记录（用于重叠检测）
     private List<Vector2> _spawnedPositions = new List<Vector2>();
     private List<float> _spawnedRadii = new List<float>();
+    private List<SpawnEntry> _spawnConfigs = new List<SpawnEntry>();
 
     #endregion
 
@@ -64,6 +64,24 @@ public class BallSpawner : MonoBehaviour
 
     #region 公开方法
 
+    public void Initialize(List<SpawnEntry> defaultBalls, List<SpawnEntry> playerBalls)
+    {
+        _spawnConfigs.Clear();
+    
+        // 合并两个配置
+        if (defaultBalls != null)
+        {
+            _spawnConfigs.AddRange(defaultBalls);
+        }
+    
+        if (playerBalls != null)
+        {
+            _spawnConfigs.AddRange(playerBalls);
+        }
+    
+        DebugLog($"Ball pool initialized: {_spawnConfigs.Count} types, Total balls: {GetTotalBallCount()}");
+    }
+    
     /// <summary>
     /// 开始生成所有球
     /// </summary>
@@ -133,6 +151,15 @@ public class BallSpawner : MonoBehaviour
     #endregion
 
     #region 内部方法
+    private int GetTotalBallCount()
+    {
+        int total = 0;
+        foreach (var entry in _spawnConfigs)
+        {
+            total += entry.count;
+        }
+        return total;
+    }
 
     private IEnumerator SpawnAllBallsCoroutine()
     {

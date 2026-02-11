@@ -46,12 +46,6 @@ public class GrabCountManager : MonoBehaviour
         DebugLog("Initialized");
     }
 
-    private void Start()
-    {
-        // 初始化次数
-        InitializeGrabs(_defaultGrabsPerRound);
-    }
-
     private void OnEnable()
     {
         if (EventManager.Instance != null)

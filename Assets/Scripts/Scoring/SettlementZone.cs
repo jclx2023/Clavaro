@@ -135,7 +135,29 @@ public class SettlementZone : MonoBehaviour
     #endregion
 
     #region 公开方法
+    /// <summary>
+    /// 清空并销毁结算池中的所有球（每次 GrabAttempt 后调用）
+    /// </summary>
+    public void ClearAndDestroyBalls()
+    {
+        if (_isChecking)
+        {
+            StopAllCoroutines();
+            _isChecking = false;
+        }
 
+        // 销毁球对象
+        foreach (var ball in _enteredBalls)
+        {
+            if (ball != null)
+            {
+                Destroy(ball.gameObject);
+            }
+        }
+
+        _enteredBalls.Clear();
+        DebugLog("Pool cleared and balls destroyed");
+    }
     /// <summary>
     /// 强制清空结算池（用于回合重置）
     /// </summary>

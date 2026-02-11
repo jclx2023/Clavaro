@@ -280,37 +280,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enableDebugLog: 0
---- !u!1 &159769844
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 159769845}
-  m_Layer: 0
-  m_Name: TopLeft
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &159769845
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 159769844}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -120, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1246276100}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &161771713
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,17 +345,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enableDebugLog: 1
   _ballPrefab: {fileID: 2082047816529628110, guid: 55de8b55663982145ae7dfc0626f5c32, type: 3}
-  _spawnConfigs:
-  - config: {fileID: 11400000, guid: 6f7b02fe8ecb5214faf3c0581bb62d88, type: 2}
-    count: 20
-  - config: {fileID: 11400000, guid: 522220bc6c7479446a6a2aec11965661, type: 2}
-    count: 15
-  - config: {fileID: 11400000, guid: 2f89790af0b23c24d9e8eb33a596a3a0, type: 2}
-    count: 10
-  - config: {fileID: 11400000, guid: 281dba8a3734cae4ea88dbc08fa08b3e, type: 2}
-    count: 5
-  - config: {fileID: 11400000, guid: 8dee88a88459c3a4db0d9a794f0f99e6, type: 2}
-    count: 3
   _topLeft: {fileID: 536377181}
   _bottomRight: {fileID: 992836982}
   _spawnInterval: 0.03
@@ -595,7 +553,7 @@ GameObject:
   - component: {fileID: 630639537}
   - component: {fileID: 630639538}
   m_Layer: 0
-  m_Name: ScorePool
+  m_Name: SettlementZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -675,7 +633,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enableDebugLog: 1
   _settlementCheckInterval: 0.2
-  _velocityThreshold: 0.3
+  _velocityThreshold: 1
   _settlementWaitTime: 0.5
 --- !u!1 &688921482
 GameObject:
@@ -1571,6 +1529,66 @@ MonoBehaviour:
   curvature: 0.08
   vignette: 0.3
   brightness: 1
+--- !u!1 &1171559247
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1171559249}
+  - component: {fileID: 1171559248}
+  m_Layer: 0
+  m_Name: RoundPlayManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1171559248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171559247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b285fad8b4faa534792d7aaa2d18ffe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enableDebugLog: 1
+  _clawController: {fileID: 901067231}
+  _ballSpawner: {fileID: 224684475}
+  _scoreManager: {fileID: 1695822396}
+  _grabCountManager: {fileID: 1980413765}
+  _settlementZone: {fileID: 630639538}
+  _testRoundConfig: {fileID: 11400000, guid: 58d63a9a432aaa344a6bf167566fc4ca, type: 2}
+  _testPlayerDeck:
+    playerBalls:
+    - config: {fileID: 11400000, guid: 6f7b02fe8ecb5214faf3c0581bb62d88, type: 2}
+      count: 20
+    - config: {fileID: 11400000, guid: 522220bc6c7479446a6a2aec11965661, type: 2}
+      count: 15
+    - config: {fileID: 11400000, guid: 2f89790af0b23c24d9e8eb33a596a3a0, type: 2}
+      count: 10
+  _settlementClearDelay: 1
+--- !u!4 &1171559249
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171559247}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -244.25961, y: 128.91783, z: -9.861005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1199027630
 GameObject:
   m_ObjectHideFlags: 0
@@ -1797,8 +1815,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 159769845}
-  - {fileID: 1997380388}
   - {fileID: 630639536}
   m_Father: {fileID: 1391277848}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2233,7 +2249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 053140cb0f9adf04782f114881488cb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enableDebugLog: 1
+  _enableDebugLog: 0
   _currentScoreText: {fileID: 688921484}
   _targetScoreText: {fileID: 1743865637}
   _grabsRemainingText: {fileID: 1824450212}
@@ -2321,7 +2337,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enableDebugLog: 1
-  _defaultTargetScore: 300
 --- !u!4 &1695822397
 Transform:
   m_ObjectHideFlags: 0
@@ -2738,77 +2753,6 @@ MonoBehaviour:
   animationLoop: 0
   databaseEffects: {fileID: 0}
   styleSheet: {fileID: 0}
---- !u!1 &1810113972
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1810113974}
-  - component: {fileID: 1810113973}
-  m_Layer: 0
-  m_Name: ClawController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1810113973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1810113972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64bd35634d23c7a4091c87e5ce63ec64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _enableDebugLog: 1
-  _moveSpeed: 5
-  _leftBound: {fileID: 536377181}
-  _rightBound: {fileID: 992836982}
-  _descendSpeed: 3
-  _ascendSpeed: 2
-  _topPosition: {fileID: 536377181}
-  _bottomPosition: {fileID: 992836982}
-  _dropZone: {fileID: 630639536}
-  _moveToDropSpeed: 4
-  _clawPivot: {fileID: 2103918892}
-  _swingAngle: 15
-  _swingSpeed: 8
-  _leftClawPivot: {fileID: 590050207}
-  _rightClawPivot: {fileID: 1349717296}
-  _leftClaw: {fileID: 1736141505}
-  _rightClaw: {fileID: 1454441589}
-  _idleAngle: 15
-  _openAngle: 30
-  _closeAngle: 5
-  _clawRotateSpeed: 5
-  _ballDetector: {fileID: 124698982}
-  _minBallsToStopDescending: 3
-  _enableCollisionStop: 1
-  _grabDuration: 0.3
-  _debugState: 0
-  _debugDetectedBallCount: 0
---- !u!4 &1810113974
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1810113972}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1824450210
 GameObject:
   m_ObjectHideFlags: 0
@@ -3095,37 +3039,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1997380387
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1997380388}
-  m_Layer: 0
-  m_Name: BottmRight
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1997380388
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997380387}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 120, y: -1080, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1246276100}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2103918891
 GameObject:
   m_ObjectHideFlags: 0
@@ -3362,7 +3275,7 @@ SceneRoots:
   - {fileID: 1220335907}
   - {fileID: 1089781172}
   - {fileID: 903447685}
-  - {fileID: 1810113974}
+  - {fileID: 1171559249}
   - {fileID: 1695822397}
   - {fileID: 1980413766}
   - {fileID: 1391277848}

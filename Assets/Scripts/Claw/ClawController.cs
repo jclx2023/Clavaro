@@ -134,12 +134,7 @@ public class ClawController : MonoBehaviour
         _currentClawAngle = _idleAngle;
         _targetClawAngle = _idleAngle;
         ApplyClawAngle();
-
-        // 检查检测器配置
-        if (_enableCollisionStop && _ballDetector == null)
-        {
-            Debug.LogWarning($"[{SCRIPT}] Collision stop is enabled but ball detector is not assigned!");
-        }
+        SetState(ClawState.Disabled);
     }
 
     private void Update()
@@ -245,6 +240,12 @@ public class ClawController : MonoBehaviour
         // 按空格开始下降
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            if (GrabCountManager.Instance != null && !GrabCountManager.Instance.HasGrabsRemaining)
+            {
+                DebugLog("Cannot grab: No grabs remaining!");
+                return;
+            }
+        
             SetState(ClawState.Descending);
         }
     }
@@ -381,7 +382,18 @@ public class ClawController : MonoBehaviour
     #endregion
 
     #region 外部接口
-
+    public void EnableClaw()
+    {
+        SetState(ClawState.Idle);
+        DebugLog("Claw enabled");
+    }
+    
+    public void DisableClaw()
+    {
+        SetState(ClawState.Disabled);
+        DebugLog("Claw disabled");
+    }
+    
     /// <summary>
     /// 结算完成后调用，触发返回
     /// </summary>

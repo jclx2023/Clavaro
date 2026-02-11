@@ -13,13 +13,6 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private bool _enableDebugLog = true;
     private void DebugLog(string msg) { if (_enableDebugLog) Debug.Log($"[{SYSTEM}][{SCRIPT}] {msg}"); }
 
-    #region 配置
-
-    [Header("目标分数配置")]
-    [SerializeField] private int _defaultTargetScore = 300;
-
-    #endregion
-
     #region 运行时数据
 
     private int _currentScore = 0;
@@ -45,12 +38,6 @@ public class ScoreManager : MonoBehaviour
         }
         Instance = this;
         DebugLog("Initialized");
-    }
-
-    private void Start()
-    {
-        _targetScore = _defaultTargetScore;
-        DebugLog($"Target Score set to: {_targetScore}");
     }
 
     private void OnEnable()
@@ -106,14 +93,13 @@ public class ScoreManager : MonoBehaviour
     #endregion
 
     #region 公开方法
-
-    /// <summary>
-    /// 设置目标分数（供外部系统调用，如回合管理器）
+    /// 初始化回合分数（由 RoundPlayManager 调用）
     /// </summary>
-    public void SetTargetScore(int target)
+    public void InitializeRound(int targetScore)
     {
-        _targetScore = target;
-        DebugLog($"Target Score set to: {_targetScore}");
+        _targetScore = targetScore;
+        _currentScore = 0;
+        DebugLog($"Round initialized: Target={_targetScore}");
     }
 
     /// <summary>

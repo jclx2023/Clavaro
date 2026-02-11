@@ -119,7 +119,7 @@ public class EventManager : MonoBehaviour
 
     public void TriggerAllBallsEnteredSettlementPool(List<BallBase> balls)
     {
-        DebugLog($"AllBallsEnteredSettlementPool: {balls.Count} balls");
+        //DebugLog($"AllBallsEnteredSettlementPool: {balls.Count} balls");
         OnAllBallsEnteredSettlementPool?.Invoke(balls);
     }
     #endregion

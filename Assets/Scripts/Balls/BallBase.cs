@@ -120,7 +120,7 @@ public class BallBase : MonoBehaviour
         // 缓存球半径（用于防重叠检测）
         _ballRadius = _config.radius * _config.GetScale();
         
-        DebugLog($"Initialized: {config.ballName}, radius={_ballRadius}");
+        //DebugLog($"Initialized: {config.ballName}, radius={_ballRadius}");
     }
     
     private void ApplyScale()
